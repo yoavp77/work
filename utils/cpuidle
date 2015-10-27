@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# alert when cpu idle over 5 seconds exceeds a threshold
+
 if [ $# -ne 1 ]; then
         echo "usage `basename $0` <cpu-idle>"
         exit 0

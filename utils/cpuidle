@@ -1,0 +1,16 @@
+#!/bin/bash
+
+if [ $# -ne 1 ]; then
+        echo "usage `basename $0` <cpu-idle>"
+        exit 0
+fi
+
+idle=`/usr/bin/mpstat 5 1 | tail -1 | awk '{print $NF}'`
+result=`echo "$idle < $1" | bc`
+if [ $result -eq 1 ]; then
+        rc=2
+else
+        rc=0
+fi
+echo "CPU idle is $idle"
+exit $rc

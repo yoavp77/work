@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# requests per second on a server - adapted (stolen) from fricks profile
+
+port=80
+domain=vimeo.com
+duration=5
+if [ "$1" != "" ]; then
+	port=$1
+fi
+if [ "$2" != "" ]; then
+	domain=$2
+fi
+if [ "$3" != "" ]; then
+	duration=$3
+fi
+
+my_device=`route -n | grep ^0.0.0.0 | awk '{print $NF}'`
+my_ip=`ip a | grep $my_device | grep inet | awk '{print $2}' | awk -F/ '{print $1}'`
+total_rps=`sudo tcpdump -w- -G $duration -W 1 -A -s 0 "dst host $my_ip and dst port $port and src host not 10.90.128.61 and (((ip[2:2] - ((ip[0]&0xf)<<2)) - ((tcp[12]&0xf0)>>2)) != 0)" 2>&1 | grep -ai "^host:.*$domain" | wc -l`
+echo "total requests: $total_rps requests per second: `expr $total_rps / 5`"
+

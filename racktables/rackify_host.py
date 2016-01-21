@@ -89,19 +89,25 @@ if __name__ == "__main__":
       sys.exit(0)
 
   # found object ID
+  #print "object ID is: " + str(host_id)
+  #print "your IP is: " + str(int_ip)
+
   # scan IP's in use for the next available one
   x.execute("""SELECT ip from IPv4Allocation where ip > """ + str(int_ip) + """;""")
   try:
     final_ip = 0
     ip = x.fetchone()
-    previous_ip = ip[0]
+    previous_ip = int_ip
     while ip is not None and final_ip == 0:
       ip = x.fetchone()
 
       # compare gap between current IP and previous one - if gap > 1, there are free IP's! yay!
       gap = ip[0] - previous_ip
       if gap > 1:
-        final_ip = previous_ip + 1
+        if previous_ip == int_ip:
+          final_ip = previous_ip
+        else:
+          final_ip = previous_ip + 1
       previous_ip = ip[0]
     #x.close()
   except:
